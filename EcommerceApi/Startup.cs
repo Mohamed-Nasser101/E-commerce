@@ -1,3 +1,5 @@
+using Core.Interfaces;
+using EcommerceApi.Helpers;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -19,13 +21,15 @@ namespace EcommerceApi
         }
 
 
-
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddAutoMapper(typeof(MappingProfile));
+            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            services.AddScoped<IProductRepository, ProductRepository>();
             services.AddDbContext<ApplicationDbContext>(
                 opt => opt.UseSqlite(_config.GetConnectionString("DefaultConnection"))
-                );
+            );
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
@@ -44,11 +48,9 @@ namespace EcommerceApi
             }
 
             app.UseHttpsRedirection();
-
             app.UseRouting();
-
+            app.UseStaticFiles();
             app.UseAuthorization();
-
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
     }

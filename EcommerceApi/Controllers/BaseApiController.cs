@@ -4,7 +4,7 @@ namespace EcommerceApi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class BaseController : ControllerBase
+    public class BaseApiController : ControllerBase
     {
     }
 }

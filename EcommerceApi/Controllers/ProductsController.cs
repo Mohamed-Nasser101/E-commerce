@@ -6,6 +6,7 @@ using Core.Interfaces;
 using Core.Specifications;
 using EcommerceApi.Dtos;
 using EcommerceApi.ErrorHandle;
+using EcommerceApi.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,9 +26,10 @@ namespace EcommerceApi.Controllers
         [HttpGet]
         public async Task<ActionResult> GetProducts([FromQuery] ProductSpecParams productParams)
         {
-            var products =
-                await _productRepository.GetListWithSpec(new ProductsWithTypesAndBrands(productParams));
-            return Ok(_mapper.Map<IReadOnlyList<ProductDto>>(products));
+            var products = await _productRepository.GetListWithSpec(new ProductsWithTypesAndBrands(productParams));
+            var count = await _productRepository.CountAsync(new ProductWithFiltersForCountSpecification(productParams));
+            var data = _mapper.Map<IReadOnlyList<ProductDto>>(products);
+            return Ok(new Pagination<ProductDto>(productParams.PageSize, productParams.PageIndex, count, data));
         }
 
         [HttpGet("{id}")]

@@ -4,4 +4,5 @@ appsettings.json
 .idea
 .vscode
 *.db
-wwwroot
+**/wwwroot/
+**/assets/images

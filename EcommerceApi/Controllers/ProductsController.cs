@@ -15,12 +15,16 @@ namespace EcommerceApi.Controllers
     public class ProductsController : BaseApiController
     {
         private readonly IGenericRepository<Product> _productRepository;
+        private readonly IGenericRepository<ProductBrand> _productBrandRepository;
+        private readonly IGenericRepository<ProductType> _productTypeRepository;
         private readonly IMapper _mapper;
 
-        public ProductsController(IGenericRepository<Product> productRepository, IMapper mapper)
+        public ProductsController(IGenericRepository<Product> productRepository, IMapper mapper, IGenericRepository<ProductType> productTypeRepository, IGenericRepository<ProductBrand> productBrandRepository)
         {
             _productRepository = productRepository;
             _mapper = mapper;
+            _productTypeRepository = productTypeRepository;
+            _productBrandRepository = productBrandRepository;
         }
 
         [HttpGet]
@@ -40,6 +44,20 @@ namespace EcommerceApi.Controllers
             var product = await _productRepository.GetEntityWithSpec(new ProductsWithTypesAndBrands(id));
             if (product == null) return NotFound(new ErrorResponse(404));
             return Ok(_mapper.Map<ProductDto>(product));
+        }
+        
+        [HttpGet("brands")]
+        public async Task<ActionResult> GetBrands()
+        {
+            var brands = await _productBrandRepository.GetListAsync();
+            return Ok(brands);
+        }
+
+        [HttpGet("types")]
+        public async Task<ActionResult> GetTypes()
+        {
+            var types = await _productTypeRepository.GetListAsync();
+            return Ok(types);
         }
     }
 }

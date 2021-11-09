@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using Core.Entities;
@@ -19,7 +20,9 @@ namespace EcommerceApi.Controllers
         private readonly IGenericRepository<ProductType> _productTypeRepository;
         private readonly IMapper _mapper;
 
-        public ProductsController(IGenericRepository<Product> productRepository, IMapper mapper, IGenericRepository<ProductType> productTypeRepository, IGenericRepository<ProductBrand> productBrandRepository)
+        public ProductsController(IGenericRepository<Product> productRepository, IMapper mapper,
+            IGenericRepository<ProductType> productTypeRepository,
+            IGenericRepository<ProductBrand> productBrandRepository)
         {
             _productRepository = productRepository;
             _mapper = mapper;
@@ -45,7 +48,7 @@ namespace EcommerceApi.Controllers
             if (product == null) return NotFound(new ErrorResponse(404));
             return Ok(_mapper.Map<ProductDto>(product));
         }
-        
+
         [HttpGet("brands")]
         public async Task<ActionResult> GetBrands()
         {

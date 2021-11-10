@@ -18,7 +18,6 @@ export class ShopService {
   }
 
   getProducts(shopParams: ShopParams) {
-    this.http.get<IBrand[]>(`https://localhost:5001/error/500`).subscribe();
     let params = new HttpParams();
     params = params.append('sort', shopParams.sort);
     params = params.append('pageIndex', shopParams.pageNumber.toString());
@@ -30,12 +29,16 @@ export class ShopService {
       params = params.append('typeId', shopParams.typeId.toString());
     }
     if (shopParams.search) {
-      params.append('search', shopParams.search);
+      params = params.append('search', shopParams.search);
     }
     return this.http.get<IPagination<IProduct>>(`${this.baseUrl}products`, {observe: 'response', params})
       .pipe(
         map(response => response.body)
       );
+  }
+
+  getProduct(id: number) {
+    return this.http.get<IProduct>(`${this.baseUrl}products/${id}`);
   }
 
   getBrands() {

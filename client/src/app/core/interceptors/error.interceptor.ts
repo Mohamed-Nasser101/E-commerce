@@ -25,7 +25,7 @@ export class ErrorInterceptor implements HttpInterceptor {
               break;
             case 400:
               if (error.error.errors) {
-                throw error.error;
+                throw error.error
               }
               this.toastr.error(error.error.message, error.error.statusCode);
               break;

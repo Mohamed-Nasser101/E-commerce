@@ -1,23 +1,26 @@
-<div class="container">
+<div class="container mt-3">
   <div class="row">
 
     <section class="col-3">
-      <h5 CLASS="text-warning ml-3">Sort</h5>
-      <select class="custom-select mb-2" (change)="onSortChange($event)">
-        <option *ngFor="let sort of sortOption" [value]="sort.value">{{sort.name}}</option>
-      </select>
-      <h5 CLASS="text-warning ml-3">Brands</h5>
-      <ul class="list-group my-3">
-        <li *ngFor="let brand of brands" (click)="onBrandSelected(brand.id)"
-            [class.active]="shopParams.brandId === brand.id" class="list-group-item" aria-current="true">{{brand.name}}
-        </li>
-      </ul>
-      <h5 class="text-warning ml-3">Types</h5>
-      <ul class="list-group my-3">
-        <li *ngFor="let type of types" (click)="onTypeSelected(type.id)"
-            [class.active]="shopParams.typeId === type.id" class="list-group-item" aria-current="true">{{type.name}}
-        </li>
-      </ul>
+      <ng-container *ngIf="types && brands">
+        <h5 CLASS="text-warning ml-3 mt-4 mb-3">Sort</h5>
+        <select class="custom-select mb-4" (change)="onSortChange($event)">
+          <option *ngFor="let sort of sortOption" [value]="sort.value">{{sort.name}}</option>
+        </select>
+        <h5 CLASS="text-warning ml-3">Brands</h5>
+        <ul class="list-group my-3">
+          <li *ngFor="let brand of brands" (click)="onBrandSelected(brand.id)"
+              [class.active]="shopParams.brandId === brand.id" class="list-group-item"
+              aria-current="true">{{brand.name}}
+          </li>
+        </ul>
+        <h5 class="text-warning ml-3">Types</h5>
+        <ul class="list-group my-3">
+          <li *ngFor="let type of types" (click)="onTypeSelected(type.id)"
+              [class.active]="shopParams.typeId === type.id" class="list-group-item" aria-current="true">{{type.name}}
+          </li>
+        </ul>
+      </ng-container>
     </section>
 
     <section class="col-9">
@@ -25,7 +28,7 @@
         <app-paging-header [pageNumber]="shopParams.pageNumber" [pageSize]="shopParams.pageSize"
                            [totalCount]="totalCount">
         </app-paging-header>
-        <div class="form-inline mt-2">
+        <div class="form-inline" *ngIf="products">
           <input #search (keyup.enter)="onSearch()" type="text" name="search" style="width: 300px"
                  class="form-control mr-2" placeholder="Search">
           <button (click)="onSearch()" class="btn btn-outline-primary my-2">Search</button>

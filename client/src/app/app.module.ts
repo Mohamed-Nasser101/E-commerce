@@ -7,9 +7,11 @@ import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
 import {CoreModule} from "./core/core.module";
 import {HomeModule} from "./home/home.module";
-import {QuicklinkModule} from "ngx-quicklink";
+// import {QuicklinkModule} from "ngx-quicklink";
 import {ErrorInterceptor} from "./core/interceptors/error.interceptor";
 import {ToastrModule} from "ngx-toastr";
+import {NgxSpinnerModule} from "ngx-spinner";
+import {LoadingInterceptor} from "./core/interceptors/loading.interceptor";
 
 @NgModule({
   declarations: [
@@ -20,16 +22,15 @@ import {ToastrModule} from "ngx-toastr";
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-    QuicklinkModule,
+    // QuicklinkModule,
     HttpClientModule,
     CoreModule,
     HomeModule,
-    ToastrModule.forRoot({
-      positionClass: 'toast-bottom-right',
-      preventDuplicates: true
-    })
+    ToastrModule.forRoot({positionClass: 'toast-bottom-right', preventDuplicates: true}),
+    NgxSpinnerModule
   ],
   providers: [
+    {provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true}
   ],
   bootstrap: [AppComponent]

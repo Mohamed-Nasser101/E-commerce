@@ -8,7 +8,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "build:stats": "ng build --stats-json",
-    "analyze": "webpack-bundle-analyzer dist/client/stats.json"
+    "analyze": "ng build --stats-json && webpack-bundle-analyzer dist/client/stats.json"
   },
   "private": true,
   "dependencies": {

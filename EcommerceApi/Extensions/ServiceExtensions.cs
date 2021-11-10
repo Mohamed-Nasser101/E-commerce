@@ -11,6 +11,7 @@ namespace EcommerceApi.Extensions
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
+            services.AddScoped<IBasketRepository, BasketRepository>();
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddScoped<IProductRepository, ProductRepository>();
             //add this after addController 
@@ -22,7 +23,7 @@ namespace EcommerceApi.Extensions
                         .Where(m => m.Value.Errors.Count > 0)
                         .SelectMany(e => e.Value.Errors)
                         .Select(e => e.ErrorMessage).ToArray();
-                    var errorResponse = new ApiValidationResponse { Errors = errors };
+                    var errorResponse = new ApiValidationResponse {Errors = errors};
                     return new BadRequestObjectResult(errorResponse);
                 };
             });

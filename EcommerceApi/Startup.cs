@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using StackExchange.Redis;
 
 namespace EcommerceApi
 {
@@ -28,6 +29,13 @@ namespace EcommerceApi
             services.AddDbContext<ApplicationDbContext>(
                 opt => opt.UseSqlite(_config.GetConnectionString("DefaultConnection"))
             );
+            
+            services.AddSingleton<IConnectionMultiplexer>(c =>
+            {
+                var config = ConfigurationOptions.Parse(_config.GetConnectionString("Redis"), true);
+                return ConnectionMultiplexer.Connect(config);
+            });
+            
             services.AddControllers();
             services.AddApplicationServices();
             services.AddSwaggerDocumentation();

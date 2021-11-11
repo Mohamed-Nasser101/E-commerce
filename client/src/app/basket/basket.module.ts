@@ -1,9 +1,7 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { BasketComponent } from '../basket.component';
-import {BasketRoutingModule} from "../basket-routing.module";
-
-
+import {NgModule} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {BasketComponent} from "./basket.component";
+import {BasketRoutingModule} from "./basket-routing.module";
 
 @NgModule({
   declarations: [
@@ -11,7 +9,8 @@ import {BasketRoutingModule} from "../basket-routing.module";
   ],
   imports: [
     CommonModule,
-    BasketRoutingModule
-  ]
+    BasketRoutingModule,
+  ],
 })
-export class BasketModule { }
+export class BasketModule {
+}

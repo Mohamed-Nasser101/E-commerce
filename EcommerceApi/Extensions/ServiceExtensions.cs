@@ -2,6 +2,7 @@
 using Core.Interfaces;
 using EcommerceApi.ErrorHandle;
 using Infrastructure.Data;
+using Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -27,6 +28,7 @@ namespace EcommerceApi.Extensions
                     return new BadRequestObjectResult(errorResponse);
                 };
             });
+            services.AddScoped<ITokenService, TokenService>();
             return services;
         }
     }

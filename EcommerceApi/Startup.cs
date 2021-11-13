@@ -60,6 +60,7 @@ namespace EcommerceApi
             app.UseRouting();
             app.UseStaticFiles();
             app.UseCors("corsPolicy");
+            app.UseAuthentication();
             app.UseAuthorization();
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }

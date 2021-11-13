@@ -2,6 +2,7 @@ using EcommerceApi.Extensions;
 using EcommerceApi.Helpers;
 using EcommerceApi.Middleware;
 using Infrastructure.Data;
+using Infrastructure.Identity;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -26,16 +27,12 @@ namespace EcommerceApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddAutoMapper(typeof(MappingProfile));
-            services.AddDbContext<ApplicationDbContext>(
-                opt => opt.UseSqlite(_config.GetConnectionString("DefaultConnection"))
-            );
-            
+            services.AddContextWithIdentityServices(_config);
             services.AddSingleton<IConnectionMultiplexer>(c =>
             {
                 var config = ConfigurationOptions.Parse(_config.GetConnectionString("Redis"), true);
                 return ConnectionMultiplexer.Connect(config);
             });
-            
             services.AddControllers();
             services.AddApplicationServices();
             services.AddSwaggerDocumentation();

@@ -1,8 +1,11 @@
 using System;
 using System.Threading.Tasks;
+using Core.Entities.Identity;
 using Infrastructure.Data;
 using Infrastructure.Data.SeedData;
+using Infrastructure.Identity;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -25,6 +28,11 @@ namespace EcommerceApi
                     var db = service.GetRequiredService<ApplicationDbContext>();
                     await db.Database.MigrateAsync();
                     await SeedContext.SeedDataAsync(db, loggerFactory);
+
+                    var userMannager = service.GetRequiredService<UserManager<AppUser>>();
+                    var identityContext = service.GetRequiredService<AppIdentityDbContext>();
+                    await identityContext.Database.MigrateAsync();
+                    await IdentityDbSeed.SeedUser(userMannager);
                 }
                 catch (Exception e)
                 {

@@ -13,6 +13,8 @@ import {NgxSpinnerModule} from "ngx-spinner";
 import {LoadingInterceptor} from "./core/interceptors/loading.interceptor";
 import {StoreModule} from "@ngrx/store";
 import {reducers} from "./store";
+import {EffectsModule} from "@ngrx/effects";
+import {BasketEffects} from "./store/effects/basket.effects";
 
 
 @NgModule({
@@ -29,7 +31,8 @@ import {reducers} from "./store";
     HomeModule,
     ToastrModule.forRoot({positionClass: 'toast-bottom-right', preventDuplicates: true}),
     NgxSpinnerModule,
-    StoreModule.forRoot(reducers)
+    StoreModule.forRoot(reducers),
+    EffectsModule.forRoot([BasketEffects])
   ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true},

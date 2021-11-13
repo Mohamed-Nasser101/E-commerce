@@ -1,10 +1,11 @@
 import {ActionReducerMap} from '@ngrx/store';
-import {basketCountReducer} from "./reducers/basketCount.reducer";
+import {basketReducer} from "./reducers/basketReducer";
+import {IBasket} from "../shared/models/basket";
 
 export interface State {
-  basketCount
+  basket: IBasket
 }
 
 export const reducers: ActionReducerMap<State> = {
-  basketCount: basketCountReducer
+  basket: basketReducer
 };

@@ -86,8 +86,8 @@ namespace EcommerceApi.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
         {
-            if ((await CheckEmailExist(registerDto.Email)).Value)
-                return BadRequest(new ApiValidationResponse {Errors = new[] {"Email already exists"}});
+            // if ((await CheckEmailExist(registerDto.Email)).Value)
+            //     return BadRequest(new ApiValidationResponse {Errors = new[] {"Email already exists"}});
 
             var user = new AppUser
             {

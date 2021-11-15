@@ -1,10 +1,15 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using EcommerceApi.Helpers;
 
 namespace EcommerceApi.Dtos
 {
     public class RegisterDto
     {
-        [Required] [EmailAddress] public string Email { get; set; }
+        [Required]
+        [EmailAddress]
+        [ValidateEmailExist]
+        public string Email { get; set; }
+
         [Required] public string DisplayName { get; set; }
 
         [Required]

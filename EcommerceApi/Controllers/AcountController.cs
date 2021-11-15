@@ -1,8 +1,13 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using AutoMapper;
 using Core.Entities.Identity;
 using Core.Interfaces;
 using EcommerceApi.Dtos;
 using EcommerceApi.ErrorHandle;
+using EcommerceApi.Extensions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,12 +18,54 @@ namespace EcommerceApi.Controllers
         private readonly SignInManager<AppUser> _signInManager;
         private readonly UserManager<AppUser> _userManager;
         private readonly ITokenService _tokenService;
+        private readonly IMapper _mapper;
 
-        public AccountController(SignInManager<AppUser> signInManager, UserManager<AppUser> userManager,ITokenService tokenService)
+        public AccountController(SignInManager<AppUser> signInManager, UserManager<AppUser> userManager,
+            ITokenService tokenService, IMapper mapper)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _tokenService = tokenService;
+            _mapper = mapper;
+        }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<ActionResult<UserDto>> GetCurrentUser()
+        {
+            // var email = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            var user = await _userManager.GetUserByEmailAsync(User);
+            return new UserDto
+            {
+                Email = user.Email,
+                Token = _tokenService.CreateToken(user),
+                DisplayName = user.DisplayName
+            };
+        }
+
+        [HttpGet("checkemail")]
+        public async Task<ActionResult<bool>> CheckEmailExist([FromQuery] string email)
+        {
+            return await _userManager.FindByEmailAsync(email) != null;
+        }
+
+        [HttpGet("address")]
+        [Authorize]
+        public async Task<ActionResult<AddressDto>> GetAddress()
+        {
+            var user = await _userManager.GetUserWithAddressAsync(User);
+            return _mapper.Map<Address, AddressDto>(user.Address);
+        }
+
+        [HttpPut]
+        [Authorize]
+        public async Task<ActionResult<AddressDto>> UpdateUserAddress(AddressDto addressDto)
+        {
+            var user = await _userManager.GetUserWithAddressAsync(User);
+            user.Address = _mapper.Map<AddressDto, Address>(addressDto);
+            var result = await _userManager.UpdateAsync(user);
+            if (result.Succeeded) return _mapper.Map<Address, AddressDto>(user.Address);
+            return BadRequest("Preblem updating");
         }
 
         [HttpPost("login")]
@@ -39,6 +86,9 @@ namespace EcommerceApi.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
         {
+            if ((await CheckEmailExist(registerDto.Email)).Value)
+                return BadRequest(new ApiValidationResponse {Errors = new[] {"Email already exists"}});
+
             var user = new AppUser
             {
                 UserName = registerDto.Email,

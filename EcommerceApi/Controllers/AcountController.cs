@@ -1,6 +1,4 @@
-﻿using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using AutoMapper;
 using Core.Entities.Identity;
 using Core.Interfaces;
@@ -43,6 +41,17 @@ namespace EcommerceApi.Controllers
             };
         }
 
+        [HttpPut]
+        [Authorize]
+        public async Task<ActionResult<AddressDto>> UpdateUserAddress(AddressDto addressDto)
+        {
+            var user = await _userManager.GetUserWithAddressAsync(User);
+            user.Address = _mapper.Map<AddressDto, Address>(addressDto);
+            var result = await _userManager.UpdateAsync(user);
+            if (result.Succeeded) return _mapper.Map<Address, AddressDto>(user.Address);
+            return BadRequest("Preblem updating");
+        }
+
         [HttpGet("checkemail")]
         public async Task<ActionResult<bool>> CheckEmailExist([FromQuery] string email)
         {
@@ -57,16 +66,6 @@ namespace EcommerceApi.Controllers
             return _mapper.Map<Address, AddressDto>(user.Address);
         }
 
-        [HttpPut]
-        [Authorize]
-        public async Task<ActionResult<AddressDto>> UpdateUserAddress(AddressDto addressDto)
-        {
-            var user = await _userManager.GetUserWithAddressAsync(User);
-            user.Address = _mapper.Map<AddressDto, Address>(addressDto);
-            var result = await _userManager.UpdateAsync(user);
-            if (result.Succeeded) return _mapper.Map<Address, AddressDto>(user.Address);
-            return BadRequest("Preblem updating");
-        }
 
         [HttpPost("login")]
         public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)

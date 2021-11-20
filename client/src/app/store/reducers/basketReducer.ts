@@ -1,6 +1,5 @@
 ﻿import {createReducer, on} from "@ngrx/store";
 import {setBasket} from "../actions/basketItems.action";
-import {Basket} from "../../shared/models/basket";
 
 export const initialState = null;
 

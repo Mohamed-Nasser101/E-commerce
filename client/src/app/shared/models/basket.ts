@@ -1,4 +1,4 @@
-﻿import { v4 as uuidv4 } from 'uuid';
+﻿import {v4 as uuidv4} from 'uuid';
 
 export interface IBasket {
   id: string;
@@ -25,3 +25,4 @@ export interface IBasketTotals {
   subtotal: number;
   shipping: number;
 }
+

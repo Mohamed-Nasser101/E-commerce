@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Core.Entities;
+using Core.Entities.OrderAggregate;
 using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.Data.SeedData
@@ -18,7 +19,7 @@ namespace Infrastructure.Data.SeedData
                 if (!context.ProductTypes.Any())
                 {
                     var typesData = await File.ReadAllTextAsync("../Infrastructure/Data/SeedData/types.json");
-                    
+
                     var types = JsonSerializer.Deserialize<List<ProductType>>(typesData);
                     await context.ProductTypes.AddRangeAsync(types);
                 }
@@ -35,6 +36,13 @@ namespace Infrastructure.Data.SeedData
                     var productsData = await File.ReadAllTextAsync("../Infrastructure/Data/SeedData/products.json");
                     var products = JsonSerializer.Deserialize<List<Product>>(productsData);
                     await context.Products.AddRangeAsync(products);
+                }
+
+                if (!context.DeliveryMethods.Any())
+                {
+                    var deliveryData = await File.ReadAllTextAsync("../Infrastructure/Data/SeedData/delivery.json");
+                    var deliverMethods = JsonSerializer.Deserialize<List<DeliveryMethod>>(deliveryData);
+                    await context.DeliveryMethods.AddRangeAsync(deliverMethods);
                 }
 
                 await context.SaveChangesAsync();

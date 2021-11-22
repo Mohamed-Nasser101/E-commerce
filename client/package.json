@@ -7,7 +7,6 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "build:stats": "ng build --stats-json",
     "analyze": "ng build --stats-json && webpack-bundle-analyzer dist/client/stats.json"
   },
   "private": true,

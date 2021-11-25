@@ -29,6 +29,8 @@ namespace EcommerceApi.Extensions
                 };
             });
             services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped<IOrderService, OrderService>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
             return services;
         }
     }

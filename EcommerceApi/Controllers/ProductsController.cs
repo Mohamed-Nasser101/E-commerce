@@ -15,26 +15,20 @@ namespace EcommerceApi.Controllers
 {
     public class ProductsController : BaseApiController
     {
-        private readonly IGenericRepository<Product> _productRepository;
-        private readonly IGenericRepository<ProductBrand> _productBrandRepository;
-        private readonly IGenericRepository<ProductType> _productTypeRepository;
         private readonly IMapper _mapper;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public ProductsController(IGenericRepository<Product> productRepository, IMapper mapper,
-            IGenericRepository<ProductType> productTypeRepository,
-            IGenericRepository<ProductBrand> productBrandRepository)
+        public ProductsController(IMapper mapper, IUnitOfWork unitOfWork)
         {
-            _productRepository = productRepository;
             _mapper = mapper;
-            _productTypeRepository = productTypeRepository;
-            _productBrandRepository = productBrandRepository;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpGet]
         public async Task<ActionResult> GetProducts([FromQuery] ProductSpecParams productParams)
         {
-            var products = await _productRepository.GetListWithSpec(new ProductsWithTypesAndBrands(productParams));
-            var count = await _productRepository.CountAsync(new ProductWithFiltersForCountSpecification(productParams));
+            var products = await _unitOfWork.Repository<Product>().GetListWithSpec(new ProductsWithTypesAndBrands(productParams));
+            var count = await _unitOfWork.Repository<Product>().CountAsync(new ProductWithFiltersForCountSpecification(productParams));
             var data = _mapper.Map<IReadOnlyList<ProductDto>>(products);
             return Ok(new Pagination<ProductDto>(productParams.PageSize, productParams.PageIndex, count, data));
         }
@@ -44,7 +38,7 @@ namespace EcommerceApi.Controllers
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
         public async Task<ActionResult> GetProduct(int id)
         {
-            var product = await _productRepository.GetEntityWithSpec(new ProductsWithTypesAndBrands(id));
+            var product = await _unitOfWork.Repository<Product>().GetEntityWithSpec(new ProductsWithTypesAndBrands(id));
             if (product == null) return NotFound(new ErrorResponse(404));
             return Ok(_mapper.Map<ProductDto>(product));
         }
@@ -52,14 +46,14 @@ namespace EcommerceApi.Controllers
         [HttpGet("brands")]
         public async Task<ActionResult> GetBrands()
         {
-            var brands = await _productBrandRepository.GetListAsync();
+            var brands = await _unitOfWork.Repository<ProductBrand>().GetListAsync();
             return Ok(brands);
         }
 
         [HttpGet("types")]
         public async Task<ActionResult> GetTypes()
         {
-            var types = await _productTypeRepository.GetListAsync();
+            var types = await _unitOfWork.Repository<ProductType>().GetListAsync();
             return Ok(types);
         }
     }

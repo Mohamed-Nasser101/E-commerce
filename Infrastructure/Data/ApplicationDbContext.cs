@@ -4,6 +4,7 @@ using System.Reflection;
 using Core.Entities;
 using Core.Entities.OrderAggregate;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Infrastructure.Data
 {
@@ -31,9 +32,19 @@ namespace Infrastructure.Data
                 {
                     var properties = entity.ClrType
                         .GetProperties().Where(p => p.PropertyType == typeof(decimal));
+
+                    var datetimeProperties = entity.ClrType.GetProperties()
+                        .Where(p => p.PropertyType == typeof(DateTimeOffset));
+
                     foreach (var property in properties)
                     {
                         modelBuilder.Entity(entity.Name).Property(property.Name).HasConversion<double>();
+                    }
+
+                    foreach (var datetimeProperty in datetimeProperties)
+                    {
+                        modelBuilder.Entity(entity.Name).Property(datetimeProperty.Name)
+                            .HasConversion(new DateTimeOffsetToBinaryConverter());
                     }
                 }
             }

@@ -1,6 +1,6 @@
-import { incrementItem, decrementItem, removeItem } from './../store/effects/effects.actions';
+import { incrementItem, decrementItem, removeItem } from '../store/effects/effects.actions';
 import { Store } from '@ngrx/store';
-import { IBasket, IBasketItem } from './../shared/models/basket';
+import { IBasket, IBasketItem } from '../shared/models/basket';
 import { Observable } from 'rxjs';
 import { Component, OnInit } from '@angular/core';
 import { State } from '../store';

@@ -3,6 +3,7 @@ obj
 appsettings.json
 .idea
 .vscode
+.vs
 *.db
 **/wwwroot/
 **/assets/images

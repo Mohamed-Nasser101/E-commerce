@@ -1,13 +1,13 @@
-import { IBasketTotals } from './../shared/models/basket';
-import { map } from 'rxjs/operators';
-import { Injectable } from '@angular/core';
-import { environment } from "../../environments/environment";
-import { HttpClient } from "@angular/common/http";
-import { Basket, IBasket, IBasketItem } from "../shared/models/basket";
-import { Store } from "@ngrx/store";
-import { State } from "../store";
-import { IProduct } from "../shared/models/product";
-import { Observable, of } from "rxjs";
+import {IBasketTotals} from '../shared/models/basket';
+import {map} from 'rxjs/operators';
+import {Injectable} from '@angular/core';
+import {environment} from "../../environments/environment";
+import {HttpClient} from "@angular/common/http";
+import {Basket, IBasket, IBasketItem} from "../shared/models/basket";
+import {Store} from "@ngrx/store";
+import {State} from "../store";
+import {IProduct} from "../shared/models/product";
+import {Observable, of} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
@@ -26,24 +26,24 @@ export class BasketService {
   addItemToBasket(basket: IBasket, item: IProduct, quantity = 1) {
     const itemToAdd: IBasketItem = this.mapItem(item, quantity);
     let newBasket: IBasket = basket ? Object.assign(basket) : this.createBasket();
-    newBasket = { id: newBasket.id, items: [...this.addOrUpdateItems(newBasket.items, itemToAdd)] };
+    newBasket = {id: newBasket.id, items: [...this.addOrUpdateItems(newBasket.items, itemToAdd)]};
     return this.setBasket(newBasket);
   }
 
-  getTotals(): Observable<IBasketTotals> {
+  getTotals(shippingPrice: number = 0): Observable<IBasketTotals> {
     return this.store.select(s => s.basket).pipe(map(basket => {
-      const shipping = 0;
+      const shipping = shippingPrice;
       const subtotal = basket?.items.reduce((a, b) => (b.quantity * b.price) + a, 0);
       const total = subtotal + shipping;
-      return { total, subtotal, shipping };
+      return {total, subtotal, shipping};
     }));
   }
 
   incrementItem(basket: IBasket, item: IBasketItem): Observable<IBasket> {
     let foundItem = basket.items.find(i => i.id === item.id);
-    const newItem: IBasketItem = { ...foundItem, quantity: (foundItem.quantity + 1) }
+    const newItem: IBasketItem = {...foundItem, quantity: (foundItem.quantity + 1)}
     const newBasketItems = basket.items.map(i => i.id === newItem.id ? newItem : i);
-    const newBasket: IBasket = { ...basket, items: newBasketItems }
+    const newBasket: IBasket = {...basket, items: newBasketItems}
     return this.setBasket(newBasket);
   }
 
@@ -51,19 +51,23 @@ export class BasketService {
     let foundItem = basket.items.find(i => i.id === item.id);
     let newBasketItems: IBasketItem[];
     if (foundItem.quantity > 1) {
-      const newItem: IBasketItem = { ...foundItem, quantity: (foundItem.quantity - 1) }
+      const newItem: IBasketItem = {...foundItem, quantity: (foundItem.quantity - 1)}
       newBasketItems = basket.items.map(i => i.id === newItem.id ? newItem : i);
     } else {
       newBasketItems = basket.items.filter(i => i.id !== item.id);
     }
-    const newBasket: IBasket = { ...basket, items: newBasketItems }
+    const newBasket: IBasket = {...basket, items: newBasketItems}
     return this.setBasket(newBasket);
   }
 
   removeItem(basket: IBasket, itemId: number) {
     const newBasketItems = basket.items.filter(i => i.id !== itemId);
-    const newBasket: IBasket = { ...basket, items: newBasketItems }
+    const newBasket: IBasket = {...basket, items: newBasketItems}
     return this.setBasket(newBasket);
+  }
+
+  removeLocalBasket() {
+    localStorage.removeItem('basket_id');
   }
 
   private setBasket(basket: IBasket) {
@@ -98,7 +102,7 @@ export class BasketService {
     let newQuantity = items[index].quantity + itemToAdd.quantity;
     return items.map((item, i) => {
       if (i !== index) return item
-      return { ...itemToAdd, quantity: newQuantity };
+      return {...itemToAdd, quantity: newQuantity};
     });
   }
 }

@@ -1,12 +1,12 @@
-﻿import { Injectable } from "@angular/core";
-import { Actions, createEffect, ofType } from "@ngrx/effects";
-import { BasketService } from "../../basket/basket.service";
-import { catchError, map, mergeMap, take } from "rxjs/operators";
-import { of } from "rxjs";
-import { setBasket } from "../actions/basketItems.action";
-import { addToBasket, decrementItem, incrementItem, loadBasket, removeItem } from "./effects.actions";
-import { Store } from "@ngrx/store";
-import { State } from "../index";
+﻿import {Injectable} from "@angular/core";
+import {Actions, createEffect, ofType} from "@ngrx/effects";
+import {BasketService} from "../../basket/basket.service";
+import {catchError, map, mergeMap, take} from "rxjs/operators";
+import {of} from "rxjs";
+import {setBasket} from "../actions/basketItems.action";
+import {addToBasket, decrementItem, incrementItem, loadBasket, removeItem} from "./effects.actions";
+import {Store} from "@ngrx/store";
+import {State} from "../index";
 
 
 @Injectable()
@@ -18,8 +18,8 @@ export class BasketEffects {
     this.actions$.pipe(
       ofType(loadBasket),
       mergeMap(() => this.basketService.loadBasket().pipe(
-        map(basket => setBasket({ basket })),
-        catchError(err => of({ type: 'sdfasf', payload: 'sdfsf' }))
+        map(basket => setBasket({basket})),
+        catchError(err => of({type: 'ErrorHandler', error: err}))
       ))
     )
   );
@@ -29,11 +29,10 @@ export class BasketEffects {
     mergeMap((action) => this.store.select(s => s.basket).pipe(
       take(1),
       mergeMap(basket => this.basketService.addItemToBasket(basket, action.item, action.quantity).pipe(
-        map(basket => setBasket({ basket })),
-        catchError(err => of({ type: 'sdfasf', payload: 'sdfsf' }))
-      )
+        map(basket => setBasket({basket})),
+        catchError(err => of({type: 'ErrorHandler', error: err}))
       ))
-    )
+    ))
   ));
 
   incrementItem = createEffect(() => this.actions$.pipe(
@@ -41,7 +40,7 @@ export class BasketEffects {
     mergeMap(action => this.store.select(s => s.basket).pipe(
       take(1),
       mergeMap(basket => this.basketService.incrementItem(basket, action.item).pipe(
-        map(basket => setBasket({ basket }))
+        map(basket => setBasket({basket}))
       ))
     ))
   ));
@@ -51,7 +50,7 @@ export class BasketEffects {
     mergeMap(action => this.store.select(s => s.basket).pipe(
       take(1),
       mergeMap(basket => this.basketService.decrementItem(basket, action.item).pipe(
-        map(basket => setBasket({ basket }))
+        map(basket => setBasket({basket}))
       ))
     ))
   ));
@@ -61,7 +60,7 @@ export class BasketEffects {
     mergeMap(action => this.store.select(s => s.basket).pipe(
       take(1),
       mergeMap(basket => this.basketService.removeItem(basket, action.itemId).pipe(
-        map(basket => setBasket({ basket }))
+        map(basket => setBasket({basket}))
       ))
     ))
   ));

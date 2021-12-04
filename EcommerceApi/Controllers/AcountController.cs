@@ -41,7 +41,7 @@ namespace EcommerceApi.Controllers
             };
         }
 
-        [HttpPut]
+        [HttpPut("address")]
         [Authorize]
         public async Task<ActionResult<AddressDto>> UpdateUserAddress(AddressDto addressDto)
         {

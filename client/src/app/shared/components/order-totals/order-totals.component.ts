@@ -15,11 +15,15 @@ export class OrderTotalsComponent implements OnInit {
     this.basketTotals$ = this.basketService.getTotals(value);
   };
 
+  @Input() set totals(value: Observable<IBasketTotals>) {
+    this.basketTotals$ = value;
+  };
+
   constructor(private basketService: BasketService) {
   }
 
   ngOnInit(): void {
-     this.basketTotals$ = this.basketService.getTotals(this.shippingPrice);
+    this.basketTotals$ = this.totals ?? this.basketService.getTotals(this.shippingPrice);
   }
 
 }

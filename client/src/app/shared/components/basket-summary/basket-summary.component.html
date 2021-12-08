@@ -3,19 +3,19 @@
     <table class="table">
       <thead>
       <tr>
-        <th [class.bg-light]="isBasket" class="border-0" scope="col">
+        <th [class.bg-light]="isBasket || isOrder" class="border-0" scope="col">
           <div class="p-2 px-3 text-uppercase">Product</div>
         </th>
-        <th [class.bg-light]="isBasket" scope="col" class="border-0">
+        <th [class.bg-light]="isBasket || isOrder" scope="col" class="border-0">
           <div class="py-2 text-uppercase">Price</div>
         </th>
-        <th [class.bg-light]="isBasket" scope="col" class="border-0">
+        <th [class.bg-light]="isBasket || isOrder" scope="col" class="border-0">
           <div class="py-2 text-uppercase">Quantity</div>
         </th>
-        <th [class.ng-light]="isBasket" scope="col" class="border-0">
+        <th [class.bg-light]="isBasket || isOrder" scope="col" class="border-0">
           <div class="py-2 text-uppercase">Total</div>
         </th>
-        <th *ngIf="isBasket" scope="col" class="border-0 bg-light">
+        <th *ngIf="isBasket || isOrder" scope="col" class="border-0 bg-light">
           <div class="py-2 text-uppercase">Remove</div>
         </th>
       </tr>

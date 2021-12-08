@@ -1,11 +1,11 @@
-import { State } from './../../store/index';
-import { Store } from '@ngrx/store';
-import { Component, OnInit } from '@angular/core';
-import { BreadcrumbService } from "xng-breadcrumb";
-import { ActivatedRoute } from "@angular/router";
-import { IProduct } from "../../shared/models/product";
-import { ShopService } from "../shop.service";
-import { addToBasket } from 'src/app/store/effects/effects.actions';
+import {State} from './../../store/index';
+import {Store} from '@ngrx/store';
+import {Component, OnInit} from '@angular/core';
+import {BreadcrumbService} from "xng-breadcrumb";
+import {ActivatedRoute} from "@angular/router";
+import {IProduct} from "../../shared/models/product";
+import {ShopService} from "../shop.service";
+import {addToBasket} from 'src/app/store/effects/effects.actions';
 
 @Component({
   selector: 'app-product-details',
@@ -40,7 +40,7 @@ export class ProductDetailsComponent implements OnInit {
   }
 
   addItem() {
-    this.store.dispatch(addToBasket({ item: this.product, quantity: this.quantity }));
+    this.store.dispatch(addToBasket({item: this.product, quantity: this.quantity}));
   }
 
 }

@@ -24,12 +24,13 @@ namespace EcommerceApi.Extensions
                         .Where(m => m.Value.Errors.Count > 0)
                         .SelectMany(e => e.Value.Errors)
                         .Select(e => e.ErrorMessage).ToArray();
-                    var errorResponse = new ApiValidationResponse {Errors = errors};
+                    var errorResponse = new ApiValidationResponse { Errors = errors };
                     return new BadRequestObjectResult(errorResponse);
                 };
             });
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IOrderService, OrderService>();
+            services.AddScoped<IPaymentService, PaymentService>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             return services;
         }

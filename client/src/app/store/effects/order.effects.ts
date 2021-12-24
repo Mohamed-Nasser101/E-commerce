@@ -2,15 +2,18 @@
 import {Actions, concatLatestFrom, createEffect, ofType} from "@ngrx/effects";
 import {BasketService} from "../../basket/basket.service";
 import {makeOrderAction} from "./effects.actions";
-import {catchError, map, mergeMap, take} from "rxjs/operators";
+import {catchError, map, mergeMap, switchMap, tap} from "rxjs/operators";
 import {CheckoutService} from "../../checkout/checkout.service";
 import {setBasket} from "../actions/basketItems.action";
-import {of} from "rxjs";
+import {of, throwError} from "rxjs";
 import {Store} from "@ngrx/store";
 import {State} from "../index";
 import {IOrderToCreate} from "../../shared/models/order";
 import {ToastrService} from "ngx-toastr";
 import {Router} from "@angular/router";
+import {StripeError} from "@stripe/stripe-js";
+import {endSubmitting, startSubmitting} from "../actions/submittingOrder.action";
+
 
 @Injectable()
 export class OrderEffects {
@@ -21,21 +24,36 @@ export class OrderEffects {
   makeOrder = createEffect(() => this.actions$.pipe(
     ofType(makeOrderAction),
     concatLatestFrom(() => this.store.select(s => s.basket)),
-    mergeMap(([action, basket]) => {
+    mergeMap(([{orderRequirement}, basket]) => {
       const order: IOrderToCreate = {
         basketId: basket.id,
-        deliveryMethodId: action.deliveryMethodId,
-        shipToAddress: action.shipToAddress
+        deliveryMethodId: orderRequirement.deliveryMethodId,
+        shipToAddress: orderRequirement.shipToAddress
       };
-      return this.checkoutService.createOrder(order).pipe(
-        map(order => {
-          this.basketService.removeLocalBasket();
-          this.toastr.success('Order Created Successfully');
-          this.router.navigate(['checkout/success'], {state: order});
-          return setBasket({basket: null})
+      this.store.dispatch(startSubmitting());
+      return this.checkoutService.createOrder(order, basket.clientSecret, orderRequirement).pipe(
+        switchMap(result => {
+          this.store.dispatch(endSubmitting());
+          if (result.paymentIntent) {
+            return this.basketService.removeBasket().pipe(
+              switchMap(() => {
+                this.toastr.success('Order Created Successfully');
+                this.router.navigate(['checkout/success'], {state: order});
+                return of(setBasket({basket: null}));
+              })
+            );
+          }
+          return throwError(result.error)
         }),
-        catchError(err => of({type: 'ErrorHandler', error: err}))
+        catchError(err => of({type: 'StripeErrorHandler', error: err}))
       )
     })
   ));
+
+  StripeErrorHandler = createEffect(() => this.actions$.pipe(
+    ofType('StripeErrorHandler'),
+    tap(({error}: { error: StripeError }) => {
+      this.toastr.error(error.message)
+    })
+  ), {dispatch: false});
 }

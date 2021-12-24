@@ -25,7 +25,9 @@ export class BasketService {
 
   addItemToBasket(basket: IBasket, item: IProduct, quantity = 1) {
     const itemToAdd: IBasketItem = this.mapItem(item, quantity);
-    let newBasket: IBasket = basket ? Object.assign(basket) : this.createBasket();
+    let newBasket: IBasket = Object.keys(basket).length === 0 && basket.constructor === Object
+      ? this.createBasket()
+      : Object.assign(basket);
     newBasket = {id: newBasket.id, items: [...this.addOrUpdateItems(newBasket.items, itemToAdd)]};
     return this.setBasket(newBasket);
   }
@@ -33,7 +35,7 @@ export class BasketService {
   getTotals(shippingPrice: number = 0): Observable<IBasketTotals> {
     return this.store.select(s => s.basket).pipe(map(basket => {
       const shipping = shippingPrice;
-      const subtotal = basket?.items.reduce((a, b) => (b.quantity * b.price) + a, 0);
+      const subtotal = basket?.items?.reduce((a, b) => (b.quantity * b.price) + a, 0);
       const total = subtotal + shipping;
       return {total, subtotal, shipping};
     }));
@@ -70,6 +72,20 @@ export class BasketService {
     localStorage.removeItem('basket_id');
   }
 
+  removeBasket() {
+    const basketId = localStorage.getItem('basket_id');
+    return this.http.delete<null>(`${this.baseUrl}basket?id=${basketId}`)
+      .pipe(map(() => this.removeLocalBasket()));
+  }
+
+  createPaymentIntent(basketId: string) {
+    return this.http.post<IBasket>(`${this.baseUrl}payments/${basketId}`, {});
+  }
+
+  updateBasket(basket: IBasket) {
+    return this.http.post<IBasket>(`${this.baseUrl}basket`, basket);
+  }
+
   private setBasket(basket: IBasket) {
     return basket.items.length > 0
       ? this.http.post<IBasket>(`${this.baseUrl}basket`, basket)
@@ -95,7 +111,7 @@ export class BasketService {
   }
 
   private addOrUpdateItems(items: IBasketItem[], itemToAdd: IBasketItem) {
-    const index = items.findIndex(item => item.id === itemToAdd.id);
+    const index = items?.findIndex(item => item.id === itemToAdd.id);
     if (index === -1) {
       return [...items, itemToAdd]
     }

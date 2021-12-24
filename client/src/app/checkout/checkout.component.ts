@@ -1,23 +1,33 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {AccountService} from "../account/account.service";
-import {add} from "ngx-bootstrap/chronos";
+import {map} from "rxjs/operators";
+import {Store} from "@ngrx/store";
+import {State} from "../store";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-checkout',
   templateUrl: './checkout.component.html',
   styleUrls: ['./checkout.component.scss']
 })
-export class CheckoutComponent implements OnInit {
+export class CheckoutComponent implements OnInit, OnDestroy {
   checkoutForm: FormGroup;
   deliveryPrice = 0;
+  // subscription: Subscription;
 
-  constructor(private fb: FormBuilder, private accountService: AccountService) {
+  constructor(private fb: FormBuilder, private accountService: AccountService, private store: Store<State>) {
   }
 
   ngOnInit(): void {
     this.createCheckoutForm();
     this.getAddressValues();
+    // this.subscription = this.store.select(x => x.basket).pipe(map(b => b.deliveryMethodId))
+    //   .subscribe(value => {
+    //     if (value) {
+    //       this.checkoutForm.get('deliveryForm').get('deliveryMethod').patchValue(value.toString());
+    //     }
+    //   });
   }
 
   createCheckoutForm() {
@@ -49,5 +59,9 @@ export class CheckoutComponent implements OnInit {
 
   updatePrice(price: number) {
     this.deliveryPrice = price;
+  }
+
+  ngOnDestroy(): void {
+    // this.subscription.unsubscribe();
   }
 }

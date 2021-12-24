@@ -1,12 +1,20 @@
 ﻿import {Injectable} from "@angular/core";
-import {Actions, createEffect, ofType} from "@ngrx/effects";
+import {Actions, concatLatestFrom, createEffect, ofType} from "@ngrx/effects";
 import {BasketService} from "../../basket/basket.service";
 import {catchError, map, mergeMap, take} from "rxjs/operators";
 import {of} from "rxjs";
-import {setBasket} from "../actions/basketItems.action";
-import {addToBasket, decrementItem, incrementItem, loadBasket, removeItem} from "./effects.actions";
+import {createBasketIntent, setBasket, updateDeliveryMethodId} from "../actions/basketItems.action";
+import {
+  addToBasket,
+  decrementItem,
+  incrementItem,
+  loadBasket,
+  removeItem,
+  setDeliveryMethodId
+} from "./effects.actions";
 import {Store} from "@ngrx/store";
 import {State} from "../index";
+import {IBasket} from "../../shared/models/basket";
 
 
 @Injectable()
@@ -63,6 +71,36 @@ export class BasketEffects {
         map(basket => setBasket({basket}))
       ))
     ))
+  ));
+
+  creteIntent = createEffect(() => this.actions$.pipe(
+    ofType(createBasketIntent),
+    concatLatestFrom(() => this.store.select(s => s.basket)),
+    mergeMap(([action, basket]) => this.basketService.createPaymentIntent(basket.id)
+      .pipe(
+        map(basket => setBasket({basket})),
+        catchError(err => of({type: 'ErrorHandler', error: err}))
+      ))
+  ));
+
+
+  setDelivery = createEffect(() => this.actions$.pipe(
+    ofType(setDeliveryMethodId),
+    concatLatestFrom(() => this.store.select(s => s.basket)),
+    mergeMap(([action, basket]) => {
+      let newBasket: IBasket = {
+        id: basket.id,
+        deliveryMethodId: action.deliveryMethodId,
+        clientSecret: basket.clientSecret,
+        items: [...basket.items],
+        paymentIntentId: basket.paymentIntentId
+      };
+      return this.basketService.updateBasket(newBasket)
+        .pipe(
+          map(basket => updateDeliveryMethodId({deliveryMethodId: action.deliveryMethodId})),
+          catchError(err => of({type: 'ErrorHandler', error: err}))
+        )
+    })
   ));
 
 }

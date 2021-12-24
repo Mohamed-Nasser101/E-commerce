@@ -1,6 +1,5 @@
 import {NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
-
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
@@ -17,6 +16,8 @@ import {BasketEffects} from "./store/effects/basket.effects";
 import {UserEffects} from "./store/effects/user.effects";
 import {JwtInterceptor} from "./core/interceptors/jwt.interceptor";
 import {OrderEffects} from "./store/effects/order.effects";
+import {NgxStripeModule} from "ngx-stripe";
+import {environment} from "../environments/environment";
 
 
 @NgModule({
@@ -31,6 +32,7 @@ import {OrderEffects} from "./store/effects/order.effects";
     CoreModule,
     HomeModule,
     NgxSpinnerModule,
+    NgxStripeModule.forRoot(environment.publishableKey),
     StoreModule.forRoot(reducers),
     EffectsModule.forRoot([BasketEffects, UserEffects, OrderEffects])
   ],

@@ -1,4 +1,5 @@
 ﻿import {IAddress} from "./address";
+import {StripeCardNumberElement} from "@stripe/stripe-js";
 
 export interface IOrderToCreate {
   basketId: string;
@@ -25,4 +26,10 @@ export interface IOrderItem {
   pictureUrl: string;
   price: number;
   quantity: number;
+}
+
+export interface IOrderRequirement {
+  deliveryMethodId: number;
+  shipToAddress: IAddress;
+  nameOnCard: string;
 }

@@ -8,8 +8,10 @@ export const environment = {
   production: false,
   baseUrl: url,
   notShowLoad: [
-    `${url}account/checkemail`
-  ]
+    {url: `${url}account/checkemail`, method: 'GET'},
+    {url: `${url}orders`, method: 'POST'}
+  ],
+  publishableKey: ''
 };
 
 /*

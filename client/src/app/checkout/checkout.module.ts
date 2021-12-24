@@ -1,13 +1,14 @@
-import { CheckoutRoutingModule } from './checkout-routing.module';
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { CheckoutComponent } from './checkout.component';
+import {CheckoutRoutingModule} from './checkout-routing.module';
+import {NgModule} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {CheckoutComponent} from './checkout.component';
 import {SharedModule} from "../shared/shared.module";
-import { CheckoutAddressComponent } from './checkout-address/checkout-address.component';
-import { CheckoutDeliveryComponent } from './checkout-delivery/checkout-delivery.component';
-import { CheckoutReviewComponent } from './checkout-review/checkout-review.component';
-import { CheckoutPaymentComponent } from './checkout-payment/checkout-payment.component';
-import { CheckoutSuccessComponent } from './checkout-success/checkout-success.component';
+import {CheckoutAddressComponent} from './checkout-address/checkout-address.component';
+import {CheckoutDeliveryComponent} from './checkout-delivery/checkout-delivery.component';
+import {CheckoutReviewComponent} from './checkout-review/checkout-review.component';
+import {CheckoutPaymentComponent} from './checkout-payment/checkout-payment.component';
+import {CheckoutSuccessComponent} from './checkout-success/checkout-success.component';
+import {NgxStripeModule} from "ngx-stripe";
 
 
 
@@ -23,7 +24,9 @@ import { CheckoutSuccessComponent } from './checkout-success/checkout-success.co
   imports: [
     CommonModule,
     CheckoutRoutingModule,
-    SharedModule
+    SharedModule,
+    NgxStripeModule,
   ]
 })
-export class CheckoutModule { }
+export class CheckoutModule {
+}

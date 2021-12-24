@@ -1,8 +1,33 @@
+<div class="mt-4" ngxStripeCardGroup [formGroup]="checkoutForm">
+  <div class="row">
+    <div class="form-group col-12" formGroupName="paymentForm">
+      <app-text-input [label]="'Name on card'" formControlName="nameOnCard"></app-text-input>
+    </div>
+    <div class="form-group col-6">
+      <ngx-stripe-card-number (change)="onChange($event)" class="form-control py-3">
+      </ngx-stripe-card-number>
+      <ng-container *ngIf="cardErrors">
+        <span class="text-danger">{{cardErrors}}</span>
+      </ng-container>
+    </div>
+    <div class="form-group col-3">
+      <ngx-stripe-card-expiry (change)="onChange($event)" class="form-control py-3">
+      </ngx-stripe-card-expiry>
+    </div>
+    <div class="form-group col-3">
+      <ngx-stripe-card-cvc (change)="onChange($event)" class="form-control py-3">
+      </ngx-stripe-card-cvc>
+    </div>
+  </div>
+</div>
+
 <div class="float-none d-flex justify-content-between flex-column flex-lg-row mb-5">
   <button class="btn btn-outline-primary" cdkStepperPrevious>
     <i class="fa fa-angle-left"></i> Back to preview
   </button>
-  <button (click)="submitOrder()" class="btn btn-primary" cdkStepperNext>
+  <button [disabled]="(submittingOrder|async) || !paymentComplete" (click)="submitOrder()"
+          class="btn btn-primary" cdkStepperNext>
     Submit order <i class="fa fa-angle-right"></i>
+    <i *ngIf="submittingOrder|async" class="fa fa-spin fa-spinner"></i>
   </button>
 </div>

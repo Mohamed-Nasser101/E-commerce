@@ -1,11 +1,14 @@
 ﻿import {createReducer, on} from "@ngrx/store";
-import {removeBasket, setBasket} from "../actions/basketItems.action";
+import {removeBasket, setBasket, updateDeliveryMethodId} from "../actions/basketItems.action";
 
 export const initialState = null;
 
 const _itemsReducer = createReducer(
   initialState,
-  on(setBasket, (state, {basket}) => basket),
+  // on(setBasket, (state, {basket}) => basket),
+  // on(removeBasket, (state) => null),
+  on(setBasket, (state, {basket}) => ({...basket})),
+  on(updateDeliveryMethodId, (state, {deliveryMethodId}) => ({...state, deliveryMethodId: deliveryMethodId})),
   on(removeBasket, (state) => null),
 );
 

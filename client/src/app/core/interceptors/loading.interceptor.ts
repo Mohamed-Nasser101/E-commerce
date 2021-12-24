@@ -13,9 +13,12 @@ export class LoadingInterceptor implements HttpInterceptor {
   }
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-    if (!this.notShowLoad.some(link => request.url.includes(link))) {
+    if (!this.notShowLoad.some(link => request.url.includes(link.url) && request.method === link.method)) {
       this.busy.busy();
     }
+    // if (!request.url.includes('orders') && request.method !== 'POST') {
+    //   this.busy.busy();
+    // }
     return next.handle(request).pipe(
       finalize(() => this.busy.idle())
     );

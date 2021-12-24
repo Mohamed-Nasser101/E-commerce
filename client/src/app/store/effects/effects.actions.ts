@@ -1,7 +1,7 @@
 ﻿import {IBasketItem} from '../../shared/models/basket';
 import {createAction, props} from "@ngrx/store";
 import {IProduct} from "../../shared/models/product";
-import {IOrderToCreate} from "../../shared/models/order";
+import {IOrderRequirement} from "../../shared/models/order";
 
 
 export const loadBasket = createAction('[basketItem component] FIRST_LOAD');
@@ -19,5 +19,6 @@ export const logoutUserAction = createAction('[UserLogoutEffect] LOGOUT_USER_EFF
 export const initiateLoginAction = createAction('[InitiateLoginUserEffect] INITIATE_LOGIN_USER_EFFECTS');
 
 
-export const makeOrderAction = createAction('[MakeOrderEffect] MAKE_ORDER_EFFECTS', props<{ deliveryMethodId: number, shipToAddress: any }>());
+export const makeOrderAction = createAction('[MakeOrderEffect] MAKE_ORDER_EFFECTS AFTER_INTENT', props<{ orderRequirement: IOrderRequirement }>());
 
+export const setDeliveryMethodId = createAction('[basketDelivery component] DELIVERY_EFFECT', props<{ deliveryMethodId: number }>());

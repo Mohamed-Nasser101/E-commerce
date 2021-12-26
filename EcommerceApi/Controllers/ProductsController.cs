@@ -24,15 +24,19 @@ namespace EcommerceApi.Controllers
             _unitOfWork = unitOfWork;
         }
 
+        [Cached(600)]
         [HttpGet]
         public async Task<ActionResult> GetProducts([FromQuery] ProductSpecParams productParams)
         {
-            var products = await _unitOfWork.Repository<Product>().GetListWithSpec(new ProductsWithTypesAndBrands(productParams));
-            var count = await _unitOfWork.Repository<Product>().CountAsync(new ProductWithFiltersForCountSpecification(productParams));
+            var products = await _unitOfWork.Repository<Product>()
+                .GetListWithSpec(new ProductsWithTypesAndBrands(productParams));
+            var count = await _unitOfWork.Repository<Product>()
+                .CountAsync(new ProductWithFiltersForCountSpecification(productParams));
             var data = _mapper.Map<IReadOnlyList<ProductDto>>(products);
             return Ok(new Pagination<ProductDto>(productParams.PageSize, productParams.PageIndex, count, data));
         }
 
+        [Cached(600)]
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
@@ -43,6 +47,7 @@ namespace EcommerceApi.Controllers
             return Ok(_mapper.Map<ProductDto>(product));
         }
 
+        [Cached(600)]
         [HttpGet("brands")]
         public async Task<ActionResult> GetBrands()
         {
@@ -50,6 +55,7 @@ namespace EcommerceApi.Controllers
             return Ok(brands);
         }
 
+        [Cached(600)]
         [HttpGet("types")]
         public async Task<ActionResult> GetTypes()
         {

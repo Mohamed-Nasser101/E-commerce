@@ -9,6 +9,7 @@ export const environment = {
   baseUrl: url,
   notShowLoad: [
     {url: `${url}account/checkemail`, method: 'GET'},
+    {url: `${url}basket`, method: 'DELETE'},
     {url: `${url}orders`, method: 'POST'}
   ],
   publishableKey: ''

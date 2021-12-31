@@ -25,7 +25,7 @@ namespace EcommerceApi.Extensions
                         .Where(m => m.Value.Errors.Count > 0)
                         .SelectMany(e => e.Value.Errors)
                         .Select(e => e.ErrorMessage).ToArray();
-                    var errorResponse = new ApiValidationResponse { Errors = errors };
+                    var errorResponse = new ApiValidationResponse {Errors = errors};
                     return new BadRequestObjectResult(errorResponse);
                 };
             });

@@ -5,7 +5,7 @@ appsettings.json
 .vscode
 .vs
 *.db
-**/wwwroot/
+**/Content/
 **/assets/images
 *.db-shm
 *.db-wal

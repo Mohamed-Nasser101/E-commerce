@@ -7,6 +7,7 @@ using Core.Interfaces;
 using EcommerceApi.ErrorHandle;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Stripe;
 using Order = Core.Entities.OrderAggregate.Order;
 
@@ -15,11 +16,12 @@ namespace EcommerceApi.Controllers;
 public class PaymentsController : BaseApiController
 {
     private readonly IPaymentService _paymentService;
-    private const string EndpointSecret = "whsec_wykaliSnyICUdPAV8GATRneyzvA50hr1";
+    private readonly string _endpointSecret;
 
-    public PaymentsController(IPaymentService paymentService, IMapper mapper)
+    public PaymentsController(IPaymentService paymentService,IConfiguration config)
     {
         _paymentService = paymentService;
+        _endpointSecret = config["StripeSettings:EndpointSecret"];
     }
 
     [Authorize]
@@ -36,21 +38,19 @@ public class PaymentsController : BaseApiController
     {
         var json = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
         var signatureHeader = Request.Headers["Stripe-Signature"];
-        var stripeEvent = EventUtility.ConstructEvent(json, signatureHeader, EndpointSecret);
-        PaymentIntent intent;
-        Order order;
+        var stripeEvent = EventUtility.ConstructEvent(json, signatureHeader, _endpointSecret);
         switch (stripeEvent.Type)
         {
             case Events.PaymentIntentSucceeded:
             {
                 var paymentIntent = stripeEvent.Data.Object as PaymentIntent;
-                order = await _paymentService.UpdateOrderPaymentSucceeded(paymentIntent.Id);
+                await _paymentService.UpdateOrderPaymentSucceeded(paymentIntent.Id);
                 break;
             }
             case Events.PaymentIntentPaymentFailed:
             {
                var paymentIntent = stripeEvent.Data.Object as PaymentIntent;
-                order = await _paymentService.UpdateOrderPaymentFailed(paymentIntent.Id);
+                await _paymentService.UpdateOrderPaymentFailed(paymentIntent.Id);
                 break;
             }
         }
